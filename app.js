@@ -18,21 +18,24 @@ var page = {
     //When you submit to log in as an existing user
     $('#returning').on('submit', function(event){
       event.preventDefault();
-      var userName= $('input[name="userName"]').val();
-      var password = $('input[name="password"]').val();
+      var username= $('input[name="userName"]').val();
+      var pass = $('input[name="password"]').val();
       $('input'[type="text"]).val("");
       $('input'[type="password"]).val("");
+      var user = JSON.stringify({userName: username, password: pass});
       //Does a GET call to get user data
       $.ajax({
-        method: 'GET',
-        url: page.url,
-        success: function(data){
-          var userInfo = data;
-          //passes that user data along with our user name and password checks password/ if user exists
-          page.checkPassword(userName,password, userInfo);
+        method: 'POST',
+        url: "/login",
+        data: user,
+        success: function(resp){
+          var currentUser = JSON.parse(resp);
+          $('section').toggleClass('hidden');
+          $('#currentUser').html(currentUser.userName);
+          $('#userMoney').html(currentUser.money);
         },
-        failure: function(data){
-
+        failure: function(){
+          alert("Wrong Password");
         }
 
       });
